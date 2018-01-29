@@ -13,7 +13,7 @@ object bookingAgg {
 
   Logger.getLogger("org").setLevel(Level.ERROR)
 
-  @transient  val log = Logger.getLogger(this.getClass.getName)
+  @transient val log = Logger.getLogger(this.getClass.getName)
 
   /*
    * function: Load data from CSV file
@@ -63,7 +63,7 @@ object bookingAgg {
 
     //need set AWS key into environment variable
 
-    val s3AccessKeyID = sys.env.getOrElse("AWS_ACCESS_KEY_ID", "NULL") 
+    val s3AccessKeyID = sys.env.getOrElse("AWS_ACCESS_KEY_ID", "NULL")
     val s3AccessSKeySecret = sys.env.getOrElse("AWS_SECRET_ACCESS_KEY", "NULL")
 
     if (s3AccessKeyID == "NULL" || s3AccessSKeySecret == "NULL") {
@@ -71,7 +71,6 @@ object bookingAgg {
       System.exit(1)
     }
 
-   
     /*
      * initialize spark session
      */
@@ -79,7 +78,7 @@ object bookingAgg {
     val spark = SparkSession
       .builder()
       .appName("SparkExerciseYong")
-      .master("local") //for local test
+      //.master("local") //for local test
       //.config("spark.sql.shuffle.partitions", "3") //for local test
       //.config("spark.sql.autoBroadcastJoinThreshold", 104857600) //for local test
       .getOrCreate()
@@ -92,12 +91,12 @@ object bookingAgg {
     /*
      * Reading CSV datasets from S3 bucket.
      */
-    
+
     try {
-      
+
       log.info("start reading data")
 
-      val hotelsData_tmp = loadCsv(spark, s3Bucket + "/hotels.csv")      
+      val hotelsData_tmp = loadCsv(spark, s3Bucket + "/hotels.csv")
       val customersData_tmp = loadCsv(spark, s3Bucket + "/customers.csv")
       val hotelBookingsData_tmp = loadCsv(spark, s3Bucket + "/hotel_bookings.csv")
 
