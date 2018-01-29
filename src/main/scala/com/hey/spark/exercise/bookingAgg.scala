@@ -169,13 +169,13 @@ object bookingAgg {
       log.info("data is aggregated. ")
 
       try {
-        println("Writing aggregated data back to s3 bucket...")
 
+        log.info("Writing aggregated data back to s3 bucket...")
         saveDfToCsv(bookingStayInterval, s3Bucket + "/bookingStayInterval", ",")
         saveDfToCsv(stayLengthByCityCounty, s3Bucket + "/stayLengthByCityCounty", ",")
         saveDfToCsv(stayLenthByAgeGender, s3Bucket + "/stayLenthByAgeGender", ",")
+        log.info("write data to s3 bucket completed.")
 
-        println("write data to s3 bucket completed.")
       } catch {
         case error: Exception =>
           log.setLevel(Level.ERROR)
