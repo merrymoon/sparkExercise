@@ -11,9 +11,9 @@ import org.apache.log4j.{ Level, Logger }
 
 object bookingAgg {
 
-  //Logger.getLogger("org").setLevel(Level.FATAL)
+  Logger.getLogger("org").setLevel(Level.ERROR)
 
-  @transient lazy val log = org.apache.log4j.LogManager.getLogger("myLogger")
+  @transient  val log = Logger.getLogger(this.getClass.getName)
 
   /*
    * function: Load data from CSV file
@@ -71,6 +71,7 @@ object bookingAgg {
       System.exit(1)
     }
 
+   
     /*
      * initialize spark session
      */
@@ -78,7 +79,7 @@ object bookingAgg {
     val spark = SparkSession
       .builder()
       .appName("SparkExerciseYong")
-      //.master("local") //for local test
+      .master("local") //for local test
       //.config("spark.sql.shuffle.partitions", "3") //for local test
       //.config("spark.sql.autoBroadcastJoinThreshold", 104857600) //for local test
       .getOrCreate()
@@ -91,11 +92,12 @@ object bookingAgg {
     /*
      * Reading CSV datasets from S3 bucket.
      */
-
+    
     try {
-      println("start reading data")
+      
+      log.info("start reading data")
 
-      val hotelsData_tmp = loadCsv(spark, s3Bucket + "/hotels.csv")
+      val hotelsData_tmp = loadCsv(spark, s3Bucket + "/hotels.csv")      
       val customersData_tmp = loadCsv(spark, s3Bucket + "/customers.csv")
       val hotelBookingsData_tmp = loadCsv(spark, s3Bucket + "/hotel_bookings.csv")
 
@@ -108,7 +110,7 @@ object bookingAgg {
       customersData.createOrReplaceTempView("customers")
       hotelBookingsData.createOrReplaceTempView("hotelBookings")
 
-      println("data is loaded ")
+      log.info("data is loaded ")
 
     } catch {
       case error: Exception =>
@@ -129,7 +131,7 @@ object bookingAgg {
       var sql = "CACHE TABLE hotelBookings"
       runSQL(spark, sql)
 
-      println("preparing aggregated data")
+      log.info("preparing aggregated data")
       /*
      * run sparkSQL to aggregate the datasets
      *
@@ -165,7 +167,7 @@ object bookingAgg {
          |GROUP BY c.Gender,floor(datediff(current_date(),c.BirthDate) / 365)       
         """.stripMargin
       val stayLenthByAgeGender = runSQL(spark, sql)
-      println("data is aggregated. ")
+      log.info("data is aggregated. ")
 
       try {
         println("Writing aggregated data back to s3 bucket...")
